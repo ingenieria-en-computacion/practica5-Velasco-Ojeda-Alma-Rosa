@@ -1,4 +1,7 @@
+
 #include "stack.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
  * Crea una nueva pila vacía y la devuelve.
@@ -8,8 +11,16 @@
  *          Si la asignación de memoria falla, la función devuelve NULL. La pila creada
  *          está vacía y top apunta a NULL
  */
-Stack *stack_create(){
-
+Stack *stack_create(int size) {
+    Stack *NewS = (Stack*)malloc(sizeof(Stack)); 
+    if (NewS == NULL) {
+        printf("Error: The Stack cannot be created\n"); 
+        return NULL;
+    } else {
+        NewS->top = NULL;
+        NewS->size = size;
+    }
+    return NewS; 
 }
 
 /**
@@ -20,10 +31,20 @@ Stack *stack_create(){
  * @details Esta función añade el dato `d` en la parte superior de la pila. Si la pila está llena
  *          o el puntero `s` es NULL, la función no realiza ninguna operación.
  */
-void stack_push(Stack* s, Data d){
-
+void stack_push(Stack* s, Data d) {
+    if (s == NULL) return;
+    if (s->top == s->size) {
+        printf("Error: The stack is full\n"); 
+        return; 
+    }
+    else {
+        Node *Newd = new_node(d); 
+        if (Newd == NULL) return;
+        Newd->next = s->top;
+        s->top = Newd; 
+    } 
 }
-
+   
 /**
  * Elimina y devuelve el elemento en la parte superior de la pila.
  * 
@@ -33,8 +54,19 @@ void stack_push(Stack* s, Data d){
  * @details Esta función elimina el elemento en la parte superior de la pila y lo devuelve.
  *          Si la pila está vacía, no se realiza ninguna operación y se devuelve un valor de error.
  */
-Data stack_pop(Stack* s){
+Data stack_pop(Stack* s) {
+    if (s == NULL || s->top == NULL) return -1; 
+    if (stack_is_empty(s) == 1) {
+        printf("Stack is empty\n"); 
+        return -1;
+    }
 
+    Node* temp = s->top;
+    s->top = s->top->next;
+    Data popped_data = temp->data;  
+    free(temp); 
+    s->size--;  
+    return popped_data; 
 }
 
 /**
@@ -45,8 +77,9 @@ Data stack_pop(Stack* s){
  * @details Esta función comprueba si la pila no contiene elementos. Es útil para evitar operaciones
  *          como `stack_pop` en una pila vacía.
  */
-int stack_is_empty(Stack* s){
-
+int stack_is_empty(Stack* s) {
+    if (s == NULL) return -1; 
+    return (s->top == NULL) ? 1 : 0;  
 }
 
 /**
@@ -57,8 +90,15 @@ int stack_is_empty(Stack* s){
  *          Si el puntero `s` es NULL, la función no realiza ninguna operación.
  *          La memoria de los elementos eliminados se libera adecuadamente.
  */
-void stack_empty(Stack* s){
-
+void stack_empty(Stack* s) { 
+    if (s == NULL) return; 
+    Node *e = s->top;
+    while (e != NULL) {
+        Node *temp = e;
+        e = e->next;
+        free(temp); 
+    }
+    s->top = NULL;
 }
 
 /**
@@ -70,8 +110,13 @@ void stack_empty(Stack* s){
  *          Es responsabilidad del llamante asegurarse de que la pila ya no se utiliza después
  *          de ser eliminada.
  */
-void stack_delete(Stack *s){
-
+void stack_delete(Stack *s) {
+    if (s == NULL) return; 
+    if (stack_is_empty(s) == 0) {
+        stack_empty(s);  
+    }
+    free(s); 
+    s = NULL;
 }
 
 /**
@@ -83,6 +128,17 @@ void stack_delete(Stack *s){
  *          un mensaje indicando que la pila está vacía o es inválida. La salida se dirige a
  *          la salida estándar (stdout).
  */
-void stack_print(Stack *s){
+void stack_print(Stack *s) {
+    if (stack_is_empty(s) == 1) {
+        printf("The stack is empty\n");
+        return;
+    }
 
+    printf("[ ");
+    Node *e = s->top; 
+    while (e != NULL) {
+        printf("%d ", e->data);  
+        e = e->next;
+    }
+    printf("]\n");
 }

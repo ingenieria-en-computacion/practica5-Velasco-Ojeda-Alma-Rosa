@@ -1,13 +1,15 @@
 #include "stack.h"
 
 /**
- * Crea una nueva pila vacía y la devuelve.
+Crea una nueva pila vacía y la devuelve.
  * 
  * @return Una nueva pila vacía. Si la creación falla, el estado de la cola es inválido.
  * @details Esta función inicializa una pila vacía.
  */
-Stack stack_create(){
-
+Stack stack_create() {
+    Stack p; 
+    p.top = -1; 
+    return p;
 }
 
 /**
@@ -18,8 +20,13 @@ Stack stack_create(){
  * @details Esta función añade el dato `d` en la parte superior de la pila. Si la pila está llena, 
  *          la función no realiza ninguna operación.
  */
-void stack_push(Stack* s, Data d){
-
+void stack_push(Stack* s, Data d) {
+    if (s->top < TAM - 1) { 
+        s->top++;
+        s->data[s->top] = d; 
+    } else {
+        printf("La pila está llena\n"); 
+    }
 }
 
 /**
@@ -31,8 +38,16 @@ void stack_push(Stack* s, Data d){
  * @details Esta función elimina el elemento en la parte superior de la pila y lo devuelve.
  *          Si la pila está vacía, no se realiza ninguna operación y se devuelve un valor de error.
  */
-Data stack_pop(Stack* s){
-
+Data stack_pop(Stack* s) { 
+    if (!stack_is_empty(s)) {
+        Data d = s->data[s->top];
+        printf("El elemento que se eliminará es: %i\n", d); 
+        s->top--; 
+        return d; 
+    } else {
+        printf("La pila está vacía\n"); 
+    }
+    return -1;  
 }
 
 /**
@@ -43,8 +58,9 @@ Data stack_pop(Stack* s){
  * @details Esta función comprueba si la pila no contiene elementos. Es útil para evitar operaciones
  *          como `stack_pop` en una pila vacía.
  */
-int stack_is_empty(Stack* s){
-
+int stack_is_empty(Stack* s) {
+    if (s->top == -1) return 1; 
+    return 0;  
 }
 
 /**
@@ -53,11 +69,12 @@ int stack_is_empty(Stack* s){
  * @param s Referencia a la pila que se desea vaciar.
  * @details Esta función hace que top sea igual a -1
  */
-void stack_empty(Stack* s){
-
+void stack_empty(Stack* s) {
+    if (!stack_is_empty(s)) {
+        printf("La cantidad de elementos en la pila es: %i\n", s->top + 1); 
+        s->top = -1; 
+    }
 }
-
-
 /**
  * Imprime los elementos de la pila.
  * 
@@ -67,6 +84,13 @@ void stack_empty(Stack* s){
  *          un mensaje indicando que la pila está vacía o es inválida. La salida se dirige a
  *          la salida estándar (stdout).
  */
-void stack_print(Stack *s){
-
+void stack_print(Stack *s) {
+    if (stack_is_empty(s)) {
+        printf("La pila está vacía\n");
+    } else {
+        printf("Los elementos de la pila son:\n");
+        for (int e = 0; e <= s->top; e++) {
+            printf("%i\n", s->data[e]);  // Imprime cada elemento en una nueva línea
+        }
+    }
 }

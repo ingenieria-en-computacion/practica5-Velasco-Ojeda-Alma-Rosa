@@ -6,9 +6,10 @@
 
 typedef struct {
     Node* top;
+    int size; 
 } Stack;
 
-Stack *stack_create();
+Stack *stack_create(int size);
 void stack_push(Stack*, Data);
 Data stack_pop(Stack*);
 bool stack_is_empty(Stack* );
